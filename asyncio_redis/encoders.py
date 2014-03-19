@@ -6,12 +6,14 @@ provides raw access to the redis server.
 """
 
 __all__ = (
-        'BaseEncoder',
-        'BytesEncoder',
-        'UTF8Encoder',
+    'BaseEncoder',
+    'BytesEncoder',
+    'UTF8Encoder',
 )
 
+
 class BaseEncoder:
+
     """
     Abstract base class for all encoders.
     """
@@ -36,6 +38,7 @@ class BaseEncoder:
 
 
 class BytesEncoder(BaseEncoder):
+
     """
     For raw access to the Redis database.
     """
@@ -50,6 +53,7 @@ class BytesEncoder(BaseEncoder):
 
 
 class StringEncoder(BaseEncoder):
+
     """
     Abstract base class for all string encoding encoders.
     """
@@ -70,6 +74,7 @@ class StringEncoder(BaseEncoder):
 
 
 class UTF8Encoder(StringEncoder):
+
     """
     Encode strings to and from utf-8 bytes.
     """

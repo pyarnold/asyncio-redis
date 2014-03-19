@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
         # Subscribe to a channel.
         subscriber = yield from connection.start_subscribe()
-        yield from subscriber.subscribe([ 'our-channel' ])
+        yield from subscriber.subscribe(['our-channel'])
 
         # Print published values in a while/true loop.
         while True:

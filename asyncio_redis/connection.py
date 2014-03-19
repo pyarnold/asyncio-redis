@@ -8,6 +8,7 @@ __all__ = ('Connection', )
 
 
 class Connection:
+
     """
     Wrapper around the protocol and transport which takes care of establishing
     the connection and reconnecting it.
@@ -49,7 +50,8 @@ class Connection:
                 asyncio.Task(connection._reconnect())
 
         # Create protocol instance
-        connection.protocol = RedisProtocol(password=password, db=db, encoder=encoder, connection_lost_callback=connection_lost)
+        connection.protocol = RedisProtocol(
+            password=password, db=db, encoder=encoder, connection_lost_callback=connection_lost)
 
         # Connect
         yield from connection._reconnect()
@@ -81,14 +83,15 @@ class Connection:
         while True:
             try:
                 logger.log(logging.INFO, 'Connecting to redis')
-                yield from loop.create_connection(lambda:self.protocol, self.host, self.port)
+                yield from loop.create_connection(lambda: self.protocol, self.host, self.port)
                 self._reset_retry_interval()
                 return
             except OSError:
                 # Sleep and try again
                 self._increase_retry_interval()
                 interval = self._get_retry_interval()
-                logger.log(logging.INFO, 'Connecting to redis failed. Retrying in %i seconds' % interval)
+                logger.log(
+                    logging.INFO, 'Connecting to redis failed. Retrying in %i seconds' % interval)
                 yield from asyncio.sleep(interval)
 
     def __getattr__(self, name):

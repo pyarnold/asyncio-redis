@@ -1,12 +1,12 @@
 __all__ = (
-        'ConnectionLostError',
-        'Error',
-        'ErrorReply',
-        'NoAvailableConnectionsInPoolError',
-        'NoRunningScriptError',
-        'NotConnectedError',
-        'ScriptKilledError',
-        'TransactionError',
+    'ConnectionLostError',
+    'Error',
+    'ErrorReply',
+    'NoAvailableConnectionsInPoolError',
+    'NoRunningScriptError',
+    'NotConnectedError',
+    'ScriptKilledError',
+    'TransactionError',
 )
 
 
@@ -15,40 +15,51 @@ __all__ = (
 
 
 class Error(Exception):
+
     """ Base exception. """
 
 
 class ErrorReply(Exception):
+
     """ Exception when the redis server returns an error. """
 
 
 class TransactionError(Error):
+
     """ Transaction failed. """
 
 
 class NotConnectedError(Error):
+
     """ Protocol is not connected. """
+
     def __init__(self, message='Not connected'):
         super().__init__(message)
 
 
 class ConnectionLostError(NotConnectedError):
+
     """
     Connection lost during query.
     (Special case of ``NotConnectedError``.)
     """
+
     def __init__(self, exc):
         self.exception = exc
 
 
 class NoAvailableConnectionsInPoolError(NotConnectedError):
+
     """
     When the connection pool has no available connections.
     """
 
+
 class ScriptKilledError(Error):
+
     """ Script was killed during an evalsha call. """
 
 
 class NoRunningScriptError(Error):
+
     """ script_kill was called while no script was running. """

@@ -18,17 +18,18 @@ if __name__ == '__main__':
         connection = yield from asyncio_redis.Connection.create(host='localhost', port=6379)
 
         # Create a set that contains a million items
-        print('Creating big set contains a million items (Can take about half a minute)')
+        print(
+            'Creating big set contains a million items (Can take about half a minute)')
 
         yield from connection.delete(['my-big-set'])
 
         # We will suffix all the items with a very long key, just to be sure
         # that this needs many IP packets, in order to send or receive this.
-        long_string = 'abcdefghij' * 1000 # len=10k
+        long_string = 'abcdefghij' * 1000  # len=10k
 
         for prefix in range(10):
             print('Callidng redis sadd:', prefix, '/10')
-            yield from connection.sadd('my-big-set', ('%s-%s-%s' % (prefix, i, long_string)  for i in range(10 * 1000) ))
+            yield from connection.sadd('my-big-set', ('%s-%s-%s' % (prefix, i, long_string) for i in range(10 * 1000)))
         print('Done\n')
 
         # Now stream the values from the database:
@@ -43,7 +44,8 @@ if __name__ == '__main__':
         set_reply = yield from connection.smembers('my-big-set')
         print('Got: ', set_reply)
 
-        # Stream the items, this will probably wait for the next IP packets to come in.
+        # Stream the items, this will probably wait for the next IP packets to
+        # come in.
         count = 0
         for f in set_reply:
             m = yield from f

@@ -16,10 +16,12 @@ __all__ = (
 
 
 class StatusReply:
+
     """
     Wrapper for Redis status replies.
     (for messages like OK, QUEUED, etc...)
     """
+
     def __init__(self, status):
         self.status = status
 
@@ -31,7 +33,9 @@ class StatusReply:
 
 
 class DictReply:
+
     """ Container for a dict reply. """
+
     def __init__(self, multibulk_reply):
         self._result = multibulk_reply
 
@@ -47,7 +51,7 @@ class DictReply:
             """ Coroutine which processes one item. """
             key, value = yield from gather(key_f, value_f)
             key, value = self._parse(key, value)
-            return { key: value }
+            return {key: value}
 
         while True:
             yield asyncio.Task(getter(next(i), next(i)))
@@ -58,7 +62,7 @@ class DictReply:
         Return the result of a sorted set query as dictionary.
         This is a mapping from the elements to their scores.
         """
-        result = { }
+        result = {}
         for f in self:
             result.update((yield from f))
         return result
@@ -68,15 +72,18 @@ class DictReply:
 
 
 class ZRangeReply(DictReply):
+
     """
     Container for a zrange query result.
     """
+
     def _parse(self, key, value):
         # Mapping { key: score_as_float }
         return key, float(value)
 
 
 class SetReply:
+
     """
     Redis set result.
     The content can be retrieved by calling
@@ -88,6 +95,7 @@ class SetReply:
             item = yield from f
             print(item)
     """
+
     def __init__(self, multibulk_reply):
         self._result = multibulk_reply
 
@@ -106,6 +114,7 @@ class SetReply:
 
 
 class ListReply:
+
     """
     Redis list result.
     The content can be retrieved by calling
@@ -118,6 +127,7 @@ class ListReply:
             item = yield from f
             print(item)
     """
+
     def __init__(self, multibulk_reply):
         self._result = multibulk_reply
 
@@ -134,10 +144,12 @@ class ListReply:
 
 
 class BlockingPopReply:
+
     """
     :func:`~asyncio_redis.RedisProtocol.blpop` or
     :func:`~asyncio_redis.RedisProtocol.brpop` reply
     """
+
     def __init__(self, list_name, value):
         self._list_name = list_name
         self._value = value
@@ -157,7 +169,9 @@ class BlockingPopReply:
 
 
 class ConfigPairReply:
+
     """ :func:`~asyncio_redis.RedisProtocol.config_get` reply. """
+
     def __init__(self, parameter, value):
         self._paramater = parameter
         self._value = value
@@ -177,19 +191,25 @@ class ConfigPairReply:
 
 
 class InfoReply:
+
     """ :func:`~asyncio_redis.RedisProtocol.info` reply. """
+
     def __init__(self, data):
-        self._data = data # TODO: implement parser logic
+        self._data = data  # TODO: implement parser logic
 
 
 class ClientListReply:
+
     """ :func:`~asyncio_redis.RedisProtocol.client_list` reply. """
+
     def __init__(self, data):
-        self._data = data # TODO: implement parser logic
+        self._data = data  # TODO: implement parser logic
 
 
 class PubSubReply:
+
     """ Received pubsub message. """
+
     def __init__(self, channel, value):
         self._channel = channel
         self._value = value
@@ -209,12 +229,14 @@ class PubSubReply:
 
 
 class EvalScriptReply:
+
     """
     :func:`~asyncio_redis.RedisProtocol.evalsha` reply.
 
     Lua scripts can return strings/bytes (NativeType), but also ints, lists or
     even nested data structures.
     """
+
     def __init__(self, protocol, value):
         self._protocol = protocol
         self._value = value
@@ -248,4 +270,3 @@ class EvalScriptReply:
                 return obj
 
         return (yield from decode(self._value))
-

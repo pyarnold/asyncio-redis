@@ -10,10 +10,12 @@ __all__ = (
 
 
 class Cursor:
+
     """
     Cursor for walking through the results of a :func:`scan
     <asyncio_redis.RedisProtocol.scan>` query.
     """
+
     def __init__(self, name, scanfunc):
         self._queue = deque()
         self._cursor = cursor = 0
@@ -65,6 +67,7 @@ class Cursor:
 
 
 class SetCursor(Cursor):
+
     """
     Cursor for walking through the results of a :func:`sscan
     <asyncio_redis.RedisProtocol.sscan>` query.
@@ -76,10 +79,12 @@ class SetCursor(Cursor):
 
 
 class DictCursor(Cursor):
+
     """
     Cursor for walking through the results of a :func:`hscan
     <asyncio_redis.RedisProtocol.hscan>` query.
     """
+
     def _parse(self, key, value):
         return key, value
 
@@ -94,7 +99,7 @@ class DictCursor(Cursor):
 
         if key is not None:
             key, value = self._parse(key, value)
-            return { key: value }
+            return {key: value}
 
     @asyncio.coroutine
     def fetchall(self):
@@ -112,10 +117,12 @@ class DictCursor(Cursor):
 
 
 class ZCursor(DictCursor):
+
     """
     Cursor for walking through the results of a :func:`zscan
     <asyncio_redis.RedisProtocol.zscan>` query.
     """
+
     def _parse(self, key, value):
         # Mapping { key: score_as_float }
         return key, float(value)

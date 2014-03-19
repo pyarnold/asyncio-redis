@@ -10,6 +10,7 @@ __all__ = ('Pool', )
 
 
 class Pool:
+
     """
     Pool of connections. Each
     Takes care of setting up the connection and connection pooling.
@@ -54,7 +55,7 @@ class Pool:
 
         for i in range(poolsize):
             connection = yield from Connection.create(host=host, port=port, password=password,
-                            db=db, encoder=encoder, auto_reconnect=auto_reconnect, loop=loop)
+                                                      db=db, encoder=encoder, auto_reconnect=auto_reconnect, loop=loop)
             self._connections.append(connection)
 
         return self
@@ -72,14 +73,14 @@ class Pool:
         """
         Return how many protocols are in use.
         """
-        return sum([ 1 for c in self._connections if c.protocol.in_use ])
+        return sum([1 for c in self._connections if c.protocol.in_use])
 
     @property
     def connections_connected(self):
         """
         The amount of open TCP connections.
         """
-        return sum([ 1 for c in self._connections if c.protocol.is_connected ])
+        return sum([1 for c in self._connections if c.protocol.is_connected])
 
     def _get_free_connection(self):
         """
@@ -110,17 +111,17 @@ class Pool:
             return getattr(connection, name)
         else:
             raise NoAvailableConnectionsInPoolError('No available connections in the pool: size=%s, in_use=%s, connected=%s' % (
-                                self.poolsize, self.connections_in_use, self.connections_connected))
-
+                self.poolsize, self.connections_in_use, self.connections_connected))
 
     # Proxy the register_script method, so that the returned object will
     # execute on any available connection in the pool.
     @asyncio.coroutine
     @wraps(RedisProtocol.register_script)
-    def register_script(self, script:str) -> Script:
+    def register_script(self, script: str) -> Script:
         # Call register_script from the Protocol.
         script = yield from self.__getattr__('register_script')(script)
         assert isinstance(script, Script)
 
-        # Return a new script instead that runs it on any connection of the pool.
+        # Return a new script instead that runs it on any connection of the
+        # pool.
         return Script(script.sha, script.code, lambda: self.evalsha)
